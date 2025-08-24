@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Elli's Floating Ao3 Comment Box
 // @namespace    http://tampermonkey.net/
-// @version      2025-08-22_generic_create_element_fcn
+// @version      0.1
 // @description  Floating menu and comment box. Mobile friendly!
 // @author       ellidimple
 // @match        https://archiveofourown.org/works/*
