@@ -3,13 +3,15 @@
 // @namespace    http://tampermonkey.net/
 // @version      2025-08-22
 // @description  Floating menu and comment box. Mobile friendly!
-// @author       You
+// @author       ellidimple
 // @match        https://archiveofourown.org/works/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=archiveofourown.org
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_deleteValue
 // @grant        GM_addStyle
+// @grant        GM_getResourceText
+// @resource     style https://raw.githubusercontent.com/ellidimple/AO3-Sticky-Comment-Box/refs/heads/Initial/style.css
 // ==/UserScript==
 
 function floatElement(element, summaryText, edge) {
@@ -94,65 +96,65 @@ window.addEventListener('load', function() {
         stickyNavigation();
         stickyComment();
         createCommentNavigation(url, workNum);
+GM_addStyle(GM_getResourceText("style"));
+//         GM_addStyle(`
+// #saveComment {
+//   height: auto;
+//   padding: 0.25em 0.75em;
+// }
 
-        GM_addStyle(`
-#saveComment {
-  height: auto;
-  padding: 0.25em 0.75em;
-}
+// #workNavigation {
+//   float: none;
+// }
 
-#workNavigation {
-  float: none;
-}
+// .floatingMenu {
 
-.floatingMenu {
+//   -webkit-box-sizing: border-box;
+//   -moz-box-sizing: border-box;
+//   box-sizing: border-box;
+//   /*filter: contrast(110%);*/
+//   padding: 8px;
+//   position: sticky;
+//   z-index: 1000;
+//   text-align: right;
+//   margin: 0;
 
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  /*filter: contrast(110%);*/
-  padding: 8px;
-  position: sticky;
-  z-index: 1000;
-  text-align: right;
-  margin: 0;
+//   &[open] {
+//     border: 1px solid;
+//   }
+// }
 
-  &[open] {
-    border: 1px solid;
-  }
-}
+// .floatingMenu::marker {
+//   display: none;
+// }
 
-.floatingMenu::marker {
-  display: none;
-}
+// .floatingMenu summary {
+//   list-style: none;
+//   font-size: 1.5em;
+// }
 
-.floatingMenu summary {
-  list-style: none;
-  font-size: 1.5em;
-}
+// .floating_top {
+//   top: 0;
+// }
 
-.floating_top {
-  top: 0;
-}
+// .floating_bottom {
+//   bottom: 0;
+// }
 
-.floating_bottom {
-  bottom: 0;
-}
-
-@media only screen and (orientation: portrait) {
-  .floating_bottom {
-    &[open] {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      bottom: initial;
-      z-index: 1001;
-      margin: 0;
-    }
-  }
-}
-`);
+// @media only screen and (orientation: portrait) {
+//   .floating_bottom {
+//     &[open] {
+//       position: fixed;
+//       top: 0;
+//       left: 0;
+//       width: 100%;
+//       bottom: initial;
+//       z-index: 1001;
+//       margin: 0;
+//     }
+//   }
+// }
+// `);
 
     }
 
