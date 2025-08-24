@@ -72,7 +72,12 @@ function createCommentNavigation(url, workNum) {
     comment_actions.classList.add("work", "navigation", "actions");
 
     const saveComment = createSaveComment();
-    saveComment.addEventListener("mouseup", function(){GM_setValue(url, commentTextArea.value);});
+    ["mouseup","touchend"].forEach((e) => {
+        saveComment.addEventListener(e, function(){
+            GM_setValue(url, commentTextArea.value);
+        });    
+    });
+    // saveComment.addEventListener("mouseup", function(){GM_setValue(url, commentTextArea.value);});
 
     [submitComment, saveComment].forEach((input) => {
         const li = document.createElement("li");
