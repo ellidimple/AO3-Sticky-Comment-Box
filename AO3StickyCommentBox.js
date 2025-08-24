@@ -72,7 +72,7 @@ function createCommentNavigation(url, workNum) {
     comment_actions.classList.add("work", "navigation", "actions");
 
     const saveComment = createSaveComment();
-    ["mouseup","touchend"].forEach((e) => {
+    ["mouseup","touchend", "touchcancel"].forEach((e) => {
         saveComment.addEventListener(e, function(){
             GM_setValue(url, commentTextArea.value);
         });    
