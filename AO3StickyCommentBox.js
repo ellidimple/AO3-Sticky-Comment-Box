@@ -81,8 +81,12 @@ function createCommentNavigation(url, workNum) {
         });    
     });
     // saveComment.addEventListener("mouseup", function(){GM_setValue(url, commentTextArea.value);});
-
-    [submitComment, saveComment].forEach((input) => {
+    const clickMe = document.creatElement("input");
+    clickMe.type = "button";
+    clickMe.addEventListener("mouseup", function() {
+        window.alert("You clicked me!");
+    });
+    [submitComment, saveComment, clickMe].forEach((input) => {
         const li = document.createElement("li");
         li.append(input);
         comment_actions.append(li);
