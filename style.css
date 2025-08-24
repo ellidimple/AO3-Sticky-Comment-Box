@@ -7,7 +7,7 @@
   float: none;
 }
 
-.floatingMenu {
+.stickyMenu {
 
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -24,25 +24,25 @@
   }
 }
 
-.floatingMenu::marker {
+.stickyMenu::marker {
   display: none;
 }
 
-.floatingMenu summary {
+.stickyMenu summary {
   list-style: none;
   font-size: 1.5em;
 }
 
-.floating_top {
+.sticky_top {
   top: 0;
 }
 
-.floating_bottom {
+.sticky_bottom {
   bottom: 0;
 }
 
 @media only screen and (orientation: portrait) {
-  .floating_bottom {
+  .sticky_bottom {
     &[open] {
       position: fixed;
       top: 0;
