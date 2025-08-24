@@ -74,7 +74,10 @@ function createCommentNavigation(url, workNum) {
     const saveComment = createSaveComment();
     ["mouseup","touchend", "touchcancel"].forEach((e) => {
         saveComment.addEventListener(e, function(){
-            GM_setValue(url, commentTextArea.value);
+            const commentText = commentTextArea.value;
+            if (commentText && commentText.length > 0) {
+                GM_setValue(url, commentText);
+            }
         });    
     });
     // saveComment.addEventListener("mouseup", function(){GM_setValue(url, commentTextArea.value);});
