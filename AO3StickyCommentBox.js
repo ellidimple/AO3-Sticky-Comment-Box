@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Elli's Floating Ao3 Comment Box
 // @namespace    http://tampermonkey.net/
-// @version      2025-08-22 Save on touchcancel
+// @version      2025-08-22 Clickme button
 // @description  Floating menu and comment box. Mobile friendly!
 // @author       ellidimple
 // @match        https://archiveofourown.org/works/*
