@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Elli's Floating Ao3 Comment Box
 // @namespace    http://tampermonkey.net/
-// @version      0.3
+// @version      0.3.1
 // @description  Floating menu and comment box. Mobile friendly!
 // @author       ellidimple
 // @match        https://archiveofourown.org/works/*
@@ -48,6 +48,9 @@ function recycleComment(pathname, workNum) {
 
     delete savedComments[pathname];
     GM_setValue("comments", JSON.stringify(savedComments));
+
+    const commentTextArea = document.getElementById(`comment_content_for_${workNum}`);
+    commentTextArea.value = null;
 }
 
 function stickyNavigation() {
@@ -80,36 +83,49 @@ function createElement(type, attributes) {
     return element;
 }
 
-function createCommentNavigation(pathname, workNum) {
-    const submitComment = document.getElementById(`comment_submit_for_${workNum}`);
-    const submitContainer = submitComment.parentElement;
-    const commentActions = document.createElement("ul");
-
-    commentActions.classList.add("work", "navigation", "actions");
-
-    // const saveComment = createSaveComment();
-    const saveComment = createElement("input", [
-        ["id", "saveComment"],
-        ["type", "button"],
-        ["value", "Save for later"]
-    ]);
-
-    saveComment.addEventListener("mouseup", function(){
+function saveComment(pathname, workNum){
         const commentTextArea = document.getElementById(`comment_content_for_${workNum}`);
         const commentText = commentTextArea.value;
 
         if (commentText && commentText.length > 0) {
             let savedComments = JSON.parse(GM_getValue("comments", "{}"));
-            window.alert(document.title);
             savedComments[pathname] = {
                 "title": document.title,
                 "text": commentText,
             };
             GM_setValue("comments", JSON.stringify(savedComments));
         }
+    }
+
+function createCommentNavigation(pathname, workNum) {
+    const submitCommentBtn = document.getElementById(`comment_submit_for_${workNum}`);
+    const submitContainer = submitCommentBtn.parentElement;
+    const commentActions = document.createElement("ul");
+
+    commentActions.classList.add("work", "navigation", "actions");
+
+    // const saveComment = createSaveComment();
+    const saveCommentBtn = createElement("input", [
+        ["id", "saveComment"],
+        ["type", "button"],
+        ["value", "Save for later"]
+    ]);
+
+    saveCommentBtn.addEventListener("mouseup", function() {
+        saveComment(pathname, workNum)
     });
 
-    [submitComment, saveComment].forEach(function (input) {
+    const recycleCommentBtn = createElement("input", [
+        ["id", "recycleComment"],
+        ["type", "button"],
+        ["value", "♻"]
+    ]);
+
+    recycleCommentBtn.addEventListener("mouseup", function() {
+        recycleComment(pathname, workNum)
+    });
+
+    [submitCommentBtn, saveCommentBtn, recycleCommentBtn].forEach(function (input) {
         const li = document.createElement("li");
         li.append(input);
         commentActions.append(li);
