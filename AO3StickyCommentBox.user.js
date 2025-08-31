@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Elli's Floating Ao3 Comment Box
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.2
 // @description  Floating menu and comment box. Mobile friendly!
 // @author       ellidimple
 // @match        https://archiveofourown.org/works/*
@@ -28,12 +28,13 @@ function stickyElement(element, summaryText, edge) {
     return sticky;
 }
 
-function retriveComment(url, workNum) {
-
-    const existingComment = GM_getValue(url);
-    const commentTextArea = document.getElementById(`comment_content_for_${workNum}`);
+function retrieveComment(pathname, workNum) {
+    const saved_comments = JSON.parse(GM_getValue("comments", "{}"));
+    const existingComment = saved_comments[pathname];
     if (existingComment) {
-        commentTextArea.value = existingComment;
+        const commentText = existingComment.text;
+        const commentTextArea = document.getElementById(`comment_content_for_${workNum}`);
+        commentTextArea.value = commentText;
     }
 }
 
@@ -67,8 +68,7 @@ function createElement(type, attributes) {
     return input;
 }
 
-function createCommentNavigation(url, workNum) {
-    const commentTextArea = document.getElementById(`comment_content_for_${workNum}`);
+function createCommentNavigation(pathname, workNum) {
     const submitComment = document.getElementById(`comment_submit_for_${workNum}`);
     const submitContainer = submitComment.parentElement;
     const comment_actions = document.createElement("ul");
@@ -83,9 +83,17 @@ function createCommentNavigation(url, workNum) {
     ]);
 
     saveComment.addEventListener("mouseup", function(){
+        const commentTextArea = document.getElementById(`comment_content_for_${workNum}`);
         const commentText = commentTextArea.value;
+
         if (commentText && commentText.length > 0) {
-            GM_setValue(url, commentText);
+            let saved_comments = JSON.parse(GM_getValue("comments", "{}"));
+            window.alert(document.title);
+            saved_comments[pathname] = {
+                "title": document.title,
+                "text": commentText,
+            };
+            GM_setValue("comments", JSON.stringify(saved_comments));
         }
     });
 
@@ -99,18 +107,17 @@ function createCommentNavigation(url, workNum) {
 }
 
 window.addEventListener("load", function() {
-    let url = window.location.toString();
+    // let url = window.location.toString();
     let pathname = window.location.pathname;
 
     let workNumMatch = pathname.match(/\/works\/(?:\d+\/chapters\/)?(\d+)?$/);
 
     if (workNumMatch) {
         const workNum = workNumMatch[1];
-
-        retriveComment(url, workNum);
+        retrieveComment(pathname, workNum);
         stickyNavigation();
         stickyComment();
-        createCommentNavigation(url, workNum);
+        createCommentNavigation(pathname, workNum);
         GM_addStyle(GM_getResourceText("style"));
     }
 
