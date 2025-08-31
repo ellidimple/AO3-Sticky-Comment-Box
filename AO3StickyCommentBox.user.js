@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Elli's Floating Ao3 Comment Box
 // @namespace    http://tampermonkey.net/
-// @version      0.2
+// @version      0.3
 // @description  Floating menu and comment box. Mobile friendly!
 // @author       ellidimple
 // @match        https://archiveofourown.org/works/*
@@ -29,8 +29,8 @@ function stickyElement(element, summaryText, edge) {
 }
 
 function retrieveComment(pathname, workNum) {
-    const saved_comments = JSON.parse(GM_getValue("comments", "{}"));
-    const existingComment = saved_comments[pathname];
+    const savedComments = JSON.parse(GM_getValue("comments", "{}"));
+    const existingComment = savedComments[pathname];
     if (existingComment) {
         const commentText = existingComment.text;
         const commentTextArea = document.getElementById(`comment_content_for_${workNum}`);
@@ -38,11 +38,23 @@ function retrieveComment(pathname, workNum) {
     }
 }
 
+function recycleComment(pathname, workNum) {
+    const savedComments = JSON.parse(GM_getValue("comments", "{}"));
+    const existingComment = savedComments[pathname];
+    const recycledComments = JSON.parse(GM_getValue("recycleBin", "{}"));
+
+    recycledComments[pathname] = existingComment;
+    GM_setValue("recycleBin", JSON.stringify(recycledComments));
+
+    delete savedComments[pathname];
+    GM_setValue("comments", JSON.stringify(savedComments));
+}
+
 function stickyNavigation() {
     //         sticky the navigation
-    const work_navigation = document.querySelector("ul.work.navigation.actions");
-    work_navigation.id = "workNavigation";
-    stickyElement(work_navigation, "📔", "top");
+    const workNavigation = document.querySelector("ul.work.navigation.actions");
+    workNavigation.id = "workNavigation";
+    stickyElement(workNavigation, "📔", "top");
 }
 
 function stickyComment() {
@@ -61,19 +73,19 @@ function stickyComment() {
 // }
 
 function createElement(type, attributes) {
-    const input = document.createElement("input");
+    const element = document.createElement(type);
     attributes.forEach(function ([name, value]) {
-        input.setAttribute(name, value);
+        element.setAttribute(name, value);
     });
-    return input;
+    return element;
 }
 
 function createCommentNavigation(pathname, workNum) {
     const submitComment = document.getElementById(`comment_submit_for_${workNum}`);
     const submitContainer = submitComment.parentElement;
-    const comment_actions = document.createElement("ul");
+    const commentActions = document.createElement("ul");
 
-    comment_actions.classList.add("work", "navigation", "actions");
+    commentActions.classList.add("work", "navigation", "actions");
 
     // const saveComment = createSaveComment();
     const saveComment = createElement("input", [
@@ -87,23 +99,23 @@ function createCommentNavigation(pathname, workNum) {
         const commentText = commentTextArea.value;
 
         if (commentText && commentText.length > 0) {
-            let saved_comments = JSON.parse(GM_getValue("comments", "{}"));
+            let savedComments = JSON.parse(GM_getValue("comments", "{}"));
             window.alert(document.title);
-            saved_comments[pathname] = {
+            savedComments[pathname] = {
                 "title": document.title,
                 "text": commentText,
             };
-            GM_setValue("comments", JSON.stringify(saved_comments));
+            GM_setValue("comments", JSON.stringify(savedComments));
         }
     });
 
     [submitComment, saveComment].forEach(function (input) {
         const li = document.createElement("li");
         li.append(input);
-        comment_actions.append(li);
+        commentActions.append(li);
     });
 
-    submitContainer.append(comment_actions);
+    submitContainer.append(commentActions);
 }
 
 window.addEventListener("load", function() {
